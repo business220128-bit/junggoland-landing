@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>중고랜드 사전예약</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Black+Han+Sans&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --card: #13131a;
+      --accent: #ff5c00;
+      --accent2: #ffb300;
+      --text: #f0f0f0;
+      --muted: #888;
+      --border: rgba(255,255,255,0.07);
+    }
+
+    html, body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Sans KR', sans-serif;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; top: -20%; left: -10%;
+      width: 70vw; height: 70vw;
+      background: radial-gradient(circle, rgba(255,92,0,0.12) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+    body::after {
+      content: '';
+      position: fixed; bottom: -20%; right: -10%;
+      width: 60vw; height: 60vw;
+      background: radial-gradient(circle, rgba(255,179,0,0.10) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    .wrap {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 60px 20px;
+    }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,92,0,0.12);
+      border: 1px solid rgba(255,92,0,0.35);
+      color: var(--accent);
+      font-size: 13px; font-weight: 700; letter-spacing: 0.08em;
+      padding: 6px 16px; border-radius: 999px;
+      margin-bottom: 32px;
+      animation: fadeDown 0.7s ease both;
+    }
+    .badge::before {
+      content: ''; width: 7px; height: 7px;
+      border-radius: 50%; background: var(--accent);
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:0.4; transform:scale(1.4); }
+    }
+
+    .title {
+      font-family: 'Black Han Sans', sans-serif;
+      font-size: clamp(52px, 13vw, 110px);
+      line-height: 1; text-align: center;
+      background: linear-gradient(135deg, #fff 30%, var(--accent2) 70%, var(--accent) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      animation: fadeDown 0.8s 0.1s ease both;
+    }
+
+    .subtitle {
+      font-size: clamp(15px, 3vw, 20px);
+      color: var(--muted); text-align: center; margin-top: 16px;
+      animation: fadeDown 0.8s 0.2s ease both;
+    }
+
+    .launch-row {
+      display: flex; align-items: center; gap: 12px;
+      margin-top: 40px;
+      animation: fadeDown 0.8s 0.3s ease both;
+    }
+    .launch-label { font-size: 13px; color: var(--muted); }
+    .launch-date { font-family: 'Black Han Sans', sans-serif; font-size: 22px; color: var(--accent2); }
+
+    .countdown-row {
+      display: flex; gap: 10px; margin-top: 12px;
+      animation: fadeDown 0.8s 0.35s ease both;
+    }
+    .cd-box {
+      display: flex; flex-direction: column; align-items: center;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 18px 10px; min-width: 64px;
+    }
+    .cd-num { font-family: 'Black Han Sans', sans-serif; font-size: 32px; line-height: 1; }
+    .cd-unit { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    .benefit-card {
+      margin-top: 28px;
+      background: linear-gradient(135deg, rgba(255,179,0,0.10), rgba(255,92,0,0.08));
+      border: 1px solid rgba(255,179,0,0.28);
+      border-radius: 16px;
+      padding: 18px 28px;
+      max-width: 400px; width: 100%;
+      display: flex; align-items: center; gap: 14px;
+      animation: fadeDown 0.8s 0.38s ease both;
+    }
+    .benefit-icon { font-size: 32px; flex-shrink: 0; }
+    .benefit-text { font-size: 15px; line-height: 1.7; }
+    .benefit-text strong { color: var(--accent2); font-size: 17px; }
+
+    .divider {
+      width: 100%; max-width: 480px;
+      height: 1px; background: var(--border);
+      margin: 36px 0;
+      animation: fadeDown 0.8s 0.4s ease both;
+    }
+
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      font-family: 'Black Han Sans', sans-serif;
+      font-size: 20px; padding: 18px 44px;
+      border-radius: 999px; border: none; cursor: pointer;
+      letter-spacing: 0.04em;
+      box-shadow: 0 8px 40px rgba(255,92,0,0.35);
+      transition: transform 0.18s, box-shadow 0.18s;
+      animation: fadeDown 0.8s 0.45s ease both;
+    }
+    .cta-btn:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 14px 50px rgba(255,92,0,0.5);
+    }
+
+    .cta-sub {
+      font-size: 13px; color: var(--muted);
+      margin-top: 14px; text-align: center;
+      animation: fadeDown 0.8s 0.5s ease both;
+    }
+
+    .footer {
+      margin-top: 60px; font-size: 12px; color: #444; text-align: center;
+      animation: fadeDown 0.8s 0.6s ease both;
+    }
+
+    @keyframes fadeDown {
+      from { opacity:0; transform:translateY(-18px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* ── 오버레이 ── */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(6px);
+      z-index: 100;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .overlay.show { opacity: 1; pointer-events: all; }
+
+    /* ── 모달 (가운데 네모) ── */
+    .modal {
+      background: #1a1a24;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 36px 32px 32px;
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      transform: translateY(40px) scale(0.96);
+      opacity: 0;
+      transition: transform 0.38s cubic-bezier(0.32,0.72,0,1), opacity 0.3s;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+    }
+    .overlay.show .modal {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 32px; height: 32px;
+      background: rgba(255,255,255,0.08);
+      border: none; border-radius: 50%; cursor: pointer;
+      color: var(--muted); font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, color 0.2s;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.15); color: var(--text); }
+
+    .modal-title {
+      font-family: 'Black Han Sans', sans-serif; font-size: 24px;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 8px;
+    }
+    .modal-desc {
+      font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 28px;
+    }
+
+    .input-label {
+      font-size: 12px; color: var(--muted);
+      letter-spacing: 0.06em; margin-bottom: 10px;
+    }
+
+    .phone-input {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 20px;
+      font-size: 24px;
+      font-family: 'Black Han Sans', sans-serif;
+      color: var(--text);
+      letter-spacing: 0.1em;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      -webkit-appearance: none;
+      text-align: center;
+    }
+    .phone-input::placeholder { color: #383845; font-size: 20px; letter-spacing: 0.05em; }
+    .phone-input:focus {
+      border-color: var(--accent);
+      background: rgba(255,92,0,0.05);
+    }
+
+    .input-hint {
+      font-size: 12px; color: var(--muted);
+      margin-top: 8px; text-align: center; min-height: 18px;
+    }
+    .input-hint.error { color: #ff5c5c; }
+    .input-hint.ok { color: #4caf82; }
+
+    .submit-btn {
+      width: 100%;
+      margin-top: 20px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      font-family: 'Black Han Sans', sans-serif;
+      font-size: 18px;
+      padding: 17px;
+      border-radius: 14px;
+      border: none; cursor: pointer;
+      box-shadow: 0 4px 24px rgba(255,92,0,0.3);
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
+    }
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(255,92,0,0.45);
+    }
+    .submit-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    /* 완료 상태 */
+    .done-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 12px;
+      padding: 10px 0;
+    }
+    .done-state.show { display: flex; }
+    .done-emoji { font-size: 56px; }
+    .done-title {
+      font-family: 'Black Han Sans', sans-serif; font-size: 24px;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .done-desc { font-size: 14px; color: var(--muted); line-height: 1.8; }
+
+    .form-state { transition: opacity 0.2s; }
+    .form-state.hide { opacity: 0; pointer-events: none; }
+
+    @media (max-width: 480px) {
+      .cd-box { min-width: 52px; padding: 10px 12px 8px; }
+      .cd-num { font-size: 24px; }
+      .cta-btn { font-size: 17px; padding: 15px 32px; }
+      .modal { padding: 28px 20px 24px; }
+      .phone-input { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="badge">사전예약 진행 중</div>
+  <h1 class="title">중고랜드</h1>
+  <p class="subtitle">대한민국 No.1 중고거래 앱 — 곧 만나요</p>
+
+  <div class="launch-row">
+    <span class="launch-label">정식 출시</span>
+    <span class="launch-date">2026년 5월 20일</span>
+  </div>
+
+  <div class="countdown-row">
+    <div class="cd-box"><span class="cd-num" id="cd-d">--</span><span class="cd-unit">일</span></div>
+    <div class="cd-box"><span class="cd-num" id="cd-h">--</span><span class="cd-unit">시간</span></div>
+    <div class="cd-box"><span class="cd-num" id="cd-m">--</span><span class="cd-unit">분</span></div>
+    <div class="cd-box"><span class="cd-num" id="cd-s">--</span><span class="cd-unit">초</span></div>
+  </div>
+
+  <div class="benefit-card">
+    <div class="benefit-icon">🎁</div>
+    <div class="benefit-text">
+      사전예약 고객님께<br>
+      <strong>광고 크레딧 3만원 지급!</strong><br>
+      <span style="font-size:13px;color:var(--muted)">출시 후 등록하신 번호로 안내드려요</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <button class="cta-btn" onclick="openModal()">
+    📱 지금 사전예약하기
+  </button>
+  <p class="cta-sub">전화번호만 입력하면 끝! 30초면 완료</p>
+
+  <div class="footer">© 2026 중고랜드. All rights reserved.</div>
+</div>
+
+<!-- 오버레이 + 모달 -->
+<div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+
+    <!-- 입력 폼 -->
+    <div class="form-state" id="formState">
+      <div class="modal-title">📱 사전예약 신청</div>
+      <div class="modal-desc">
+        전화번호를 입력하면 출시 시 가장 먼저 알려드려요!<br>
+        <span style="color:var(--accent2)">광고 크레딧 3만원</span>도 함께 드려요 🎁
+      </div>
+      <div class="input-label">전화번호 (- 없이 11자리)</div>
+      <input
+        class="phone-input"
+        id="phoneInput"
+        type="tel"
+        inputmode="numeric"
+        maxlength="11"
+        placeholder="01012345678"
+        oninput="onInput(this)"
+        onkeydown="onKeyDown(event)"
+      />
+      <div class="input-hint" id="inputHint">숫자만 입력해주세요</div>
+      <button class="submit-btn" id="submitBtn" onclick="submitForm()" disabled>
+        사전예약 완료하기
+      </button>
+    </div>
+
+    <!-- 완료 상태 -->
+    <div class="done-state" id="doneState">
+      <div class="done-emoji">🎉</div>
+      <div class="done-title">사전예약 완료!</div>
+      <div class="done-desc">
+        5월 20일 출시 시 문자로 알려드릴게요<br>
+        <span style="color:var(--accent2)">광고 크레딧 3만원</span>도 함께 지급돼요!
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 카운트다운
+  const target = new Date('2026-05-20T00:00:00+09:00');
+  function update() {
+    const diff = target - new Date();
+    if (diff <= 0) {
+      ['cd-d','cd-h','cd-m','cd-s'].forEach(id => document.getElementById(id).textContent = '00');
+      return;
+    }
+    document.getElementById('cd-d').textContent = String(Math.floor(diff/86400000)).padStart(2,'0');
+    document.getElementById('cd-h').textContent = String(Math.floor(diff%86400000/3600000)).padStart(2,'0');
+    document.getElementById('cd-m').textContent = String(Math.floor(diff%3600000/60000)).padStart(2,'0');
+    document.getElementById('cd-s').textContent = String(Math.floor(diff%60000/1000)).padStart(2,'0');
+  }
+  update(); setInterval(update, 1000);
+
+  // 모달 열기/닫기
+  function openModal() {
+    document.getElementById('overlay').classList.add('show');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('phoneInput').focus(), 400);
+  }
+  function closeModal() {
+    document.getElementById('overlay').classList.remove('show');
+    document.body.style.overflow = '';
+  }
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('overlay')) closeModal();
+  }
+
+  // 입력 처리
+  function onInput(el) {
+    el.value = el.value.replace(/[^0-9]/g, '');
+    const len = el.value.length;
+    const btn = document.getElementById('submitBtn');
+    const hint = document.getElementById('inputHint');
+
+    if (len === 0) {
+      hint.textContent = '숫자만 입력해주세요';
+      hint.className = 'input-hint';
+      btn.disabled = true;
+    } else if (len < 11) {
+      hint.textContent = `${len} / 11자리`;
+      hint.className = 'input-hint';
+      btn.disabled = true;
+    } else {
+      const valid = ['010','011','016','017','018','019'].some(p => el.value.startsWith(p));
+      if (!valid) {
+        hint.textContent = '올바른 전화번호를 입력해주세요';
+        hint.className = 'input-hint error';
+        btn.disabled = true;
+      } else {
+        hint.textContent = '✅ 입력 완료!';
+        hint.className = 'input-hint ok';
+        btn.disabled = false;
+      }
+    }
+  }
+
+  function onKeyDown(e) {
+    if (e.key === 'Enter') submitForm();
+  }
+
+  // 구글폼 제출
+  function submitForm() {
+    const phone = document.getElementById('phoneInput').value;
+    if (phone.length !== 11) return;
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = '제출 중...';
+
+    const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSd5lue_erPtdvur38waZcRPmB_ymP_lAAT_CUVmQSQMsUaGZw/formResponse';
+    const data = new FormData();
+    data.append('entry.274934151', phone);
+
+    fetch(formUrl, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: data
+    }).then(showDone).catch(showDone);
+  }
+
+  function showDone() {
+    document.getElementById('formState').classList.add('hide');
+    setTimeout(() => {
+      document.getElementById('formState').style.display = 'none';
+      document.getElementById('doneState').classList.add('show');
+    }, 200);
+    setTimeout(() => closeModal(), 3000);
+  }
+</script>
+</body>
+</html>
