@@ -256,7 +256,7 @@
 
     <div class="badge">수수료 0원 중고거래</div>
 
-    <p class="copy">중고거래, 이제 손해 없이<br>대한민국 NO.1 중고거래 플랫폼</p>
+    <p class="copy">팔아도 내 돈, 살 때도 이득<br>대한민국 no.1 무료 중고거래</p>
 
     <div class="btn-group" id="btnGroup">
       <a class="store-btn" id="androidBtn"
@@ -294,12 +294,8 @@
       var ua = navigator.userAgent || navigator.vendor || window.opera;
       var isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
       var isAndroid = /android/i.test(ua);
-      if (isIOS) {
-        window.location.href = 'https://apps.apple.com/kr/app/%EC%A4%91%EA%B3%A0%EB%9E%9C%EB%93%9C/id6764075997';
-      } else if (isAndroid) {
-        window.location.href = 'https://play.google.com/store/apps/details?id=com.junggoland.application';
-      }
-      // PC는 랜딩 페이지 그대로 표시
+      if (isIOS) document.getElementById('iosBtn').classList.add('highlight');
+      else if (isAndroid) document.getElementById('androidBtn').classList.add('highlight');
     })();
   </script>
 </body>
